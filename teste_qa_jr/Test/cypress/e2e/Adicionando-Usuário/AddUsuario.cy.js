@@ -6,48 +6,71 @@ describe('Formulário', () => {
     beforeEach(() => {
         cy.visit('/')
     })
-
+    
     it('Cadastrando um novo usuário com sucesso', () => {
+        cy.intercept('POST', 'http://localhost:8400/api/user/create').as('cadastroComSucesso')
         cy.cadastroComSucesso()
-        cy.get('#new-user').should('contain', 'Novo Usuário')
+        cy.wait('@cadastroComSucesso').then((interception) => {
+            expect(interception.request.method).to.eq('POST')
+            expect(interception.response.statusCode).to.eq(200)
+        })
+        
     })
 
-    it('Cadastro sem o nome do usuário', () => {
+    it('Cadastro sem preencher o campo Nome', () => {
+        cy.intercept('GET', 'http://localhost:5400/static/media/close.f62862c6.svg').as('cadastroSemNome')
         cy.cadastroSemNome()
-        cy.get('[placeholder="Nome"]').should('have.value', '')
-    })
-
-    it('Cadastro sem o email do usuário', () => {
-        cy.cadastroSemEmail()
-        cy.get('[placeholder="Email"]').should('have.value', '')
-    })
-
-    it.only('Cadastro sem o número do usuário', () => {
-        cy.cadastroSemTelefone()
-        cy.request({
-            metohod: 'POST',
-            url: 'http://localhost:5400/'
-        }).then((response) =>{
-            
-            expect(response.status).to.equal(200)
+        cy.wait('@cadastroSemNome').then((interception) => {
+            expect(interception.request.method).to.eq('GET')
+            expect(interception.response.statusCode).to.eq(304)
         })
     })
 
-    it('Cadastro sem a cidade do usuário', () => {
-        cy.cadastro()
+    it('Cadastro sem preencher o campo Email', () => {
+        cy.intercept('GET', 'http://localhost:5400/static/media/close.f62862c6.svg').as('cadastroSemEmail')
+        cy.cadastroSemEmail()
+        cy.wait('@cadastroSemEmail').then((interception) => {
+            expect(interception.request.method).to.eq('GET')
+            expect(interception.response.statusCode).to.eq(304)
+        })
     })
 
-    it('Cadastro sem a data de nascimento do usuário', () => {
-        cy.cadastro()
+    it('Cadastro sem preencher o campo Número', () => {
+        cy.intercept('POST', 'http://localhost:8400/api/user/create').as('cadastroSemTelefone');
+        cy.cadastroSemTelefone();
+        cy.wait('@cadastroSemTelefone').then((interception) => {
+            expect(interception.request.method).to.eq('POST');
+            expect(interception.response.statusCode).to.eq(200); 
+        });
     })
 
-    it('Cadastro sem a empresa do usuário', () => {
-        cy.cadastro()
+    it('Cadastro sem preencher o campo Cidade de nascimento', () => {
+        cy.intercept('POST', 'http://localhost:8400/api/user/create').as('cadastroSemCidade');
+        cy.cadastroSemCidade()
+        cy.wait('@cadastroSemCidade').then((interception) => {
+            expect(interception.request.method).to.eq('POST');
+            expect(interception.response.statusCode).to.eq(200); 
+        });
     })
 
+    it('Cadastro sem a selecionar a data de nascimento do usuário', () => {
+        cy.intercept('GET', 'http://localhost:5400/static/media/close.f62862c6.svg').as('cadastroSemData')
+        cy.cadastroSemData()
+        cy.wait('@cadastroSemData').then((interception) => {
+            expect(interception.request.method).to.eq('GET')
+            expect(interception.response.statusCode).to.eq(304)
+        })
+    })
+
+    it('Cadastro sem selecionar o campo empresa', () => {
+        cy.intercept('GET', 'http://localhost:5400/static/media/close.f62862c6.svg').as('cadastroSemEmpresa')
+        cy.cadastroSemEmpresa()
+        cy.wait('@cadastroSemEmpresa').then((interception) => {
+            expect(interception.request.method).to.eq('GET')
+            expect(interception.response.statusCode).to.eq(304)
+        })
+        cy.get('strong').should('contain', 'Atenção!')
+    })
 
     
-
-
-
 })
