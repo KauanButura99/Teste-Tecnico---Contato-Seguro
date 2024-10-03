@@ -75,10 +75,8 @@ Cypress.Commands.add('cadastroSemData', () => {
    const cidadeNas = faker.location.city()
    const dataAleatoria = faker.date.birthdate()
    
-
    cy.preencherFormulario(nome, email, telefone, cidadeNas, null, true)
 })
-
 
 Cypress.Commands.add('cadastroSemEmpresa', () => {
    const nome = faker.person.firstName()
